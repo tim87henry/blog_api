@@ -1,24 +1,10 @@
  var express = require('express');
  var router = express.Router();
  var User = require('../models/user');
+ var user_controller = require('../controllers/userController');
 
- router.get('/', function(req, res, next) {
-     User.find()
-     .then(users => res.json(users))
-     .catch(err => res.status(400).json('Error :: '+err));
- });
-
- router.post('/add', function(req, res, next) {
-     const first_name = req.body.first_name;
-     const last_name = req.body.last_name;
-     const username = req.body.username;
-     const password = req.body.password;
-
-     const newUser = new User({first_name, last_name, username, password});
-     
-     newUser.save()
-     .then(() => res.json('User added'))
-     .catch(err => res.status(400).json('Error adding user :: '+err));
- });
+ router.get('/', user_controller.find_users);
+ router.post('/add', user_controller.add_user);
+ router.get('/:id', user_controller.show_user_blogs);
 
  module.exports = router;

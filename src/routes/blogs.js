@@ -1,25 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var Blog = require('../models/blog');
+var blog_controller = require('../controllers/blogController');
 
-router.get('/', function(req, res, next) {
-    Blog.find()
-    .then(blogs => res.json(blogs))
-    .catch(err => res.status(400).json('Error :: '+err));
-});
-
-router.post('/add', function(req, res, next) {
-    const user = req.body.user;
-    const time = req.body.time;
-    const title = req.body.title;
-    const text = req.body.text;
-    const comments = [];
-
-    const newBlog = new Blog({user, time, title, text, comments});
-    
-    newBlog.save()
-    .then(() => res.json('Blog added'))
-    .catch(err => res.status(400).json('Error adding blog :: '+err));
-});
+router.get('/',  blog_controller.find_all_blogs);
+router.post('/add', blog_controller.add_blog);
+router.post('/:id/show', blog_controller.show_blog);
+router.post('/:id/update', blog_controller.edit_blog);
+router.post('/:id/delete', blog_controller.delete_blog);
 
 module.exports = router;

@@ -14,8 +14,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const userRoute = require('./routes/users');
+const blogRoute = require('./routes/blogs');
+const commentRoute = require('./routes/comments');
 
 app.use('/users', userRoute);
+app.use('/blogs', blogRoute);
+app.use('/comments', commentRoute);
 
 app.get('/', (req, res, next) => {
     res.send("Hmmm vandidhu")
