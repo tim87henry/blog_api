@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv/config');
 var mongoose = require('mongoose');
+const cors = require("cors");
 
 const app = express();
 
@@ -12,6 +13,7 @@ db.on('error',console.error.bind(console, "Mongo DB connection error"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 const userRoute = require('./routes/users');
 const blogRoute = require('./routes/blogs');
