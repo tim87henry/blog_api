@@ -9,6 +9,7 @@ exports.find_users = function(req, res, next) {
 };
 
 exports.add_user = function(req, res, next) {
+    console.log("HERE  ::  "+req.body)
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const username = req.body.username;
