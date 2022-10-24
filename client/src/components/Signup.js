@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {useRef} from "react";
+import {Link} from "react-router-dom";
 
 const Signup = () => {
 
@@ -9,7 +10,6 @@ const Signup = () => {
     const password_ref = useRef();
 
     const addUser = () => {
-        console.log("it's happening")
         axios.post("http://localhost:5000/users/add",{
             first_name: first_name_ref.current.value,
             last_name: last_name_ref.current.value,
@@ -30,7 +30,9 @@ const Signup = () => {
             Last name <input type="text" name="last_name" ref={last_name_ref}></input><br/>
             Username <input type="text" name="username" ref={username_ref}></input><br/>
             Password <input type="text" name="password" ref={password_ref}></input><br/>
-            <input type="button" onClick={addUser} value="Sign Up" />
+            <Link to="/">
+                <input type="button" onClick={addUser} value="Sign Up" />
+            </Link>
         </div>
     )
 };

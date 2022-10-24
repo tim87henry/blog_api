@@ -3,6 +3,7 @@ import Signup from './components/Signup';
 import Title from './components/Title';
 import './components/style.css';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import Login from './components/Login';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </div>
