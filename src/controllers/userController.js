@@ -3,19 +3,23 @@ var Blog = require('../models/blog');
 var async = require('async');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const jwt = require('jsonwebtoken');
 
 passport.use(
   new LocalStrategy((username, password, done) => {
-    User.findOne({ username: req.body.username }, (err, user) => {
+    console.log("Auth")
+    User.findOne({ username: username }, (err, user) => {
       if (err) { 
-        res.status(400).json(err)
+        res.json({error: err})
       }
       if (!user) {
-        res.status(400).json("This user doesn't exist")
+        console.log("no user")
+        return done(null, false, { message: "Incorrect username" });
       }
-      if(req.body.password === user.password) {
-        res.status(400).json("Wrong password mate")
+      if (user.password !== password) {
+        return done(null, false, { message: "Incorrect password" });
       }
+      return done(null, user);
     });
   })
 );
@@ -37,7 +41,6 @@ exports.find_users = function(req, res, next) {
 };
 
 exports.add_user = function(req, res, next) {
-    console.log("HERE  ::  "+req.body)
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const username = req.body.username;
@@ -50,10 +53,26 @@ exports.add_user = function(req, res, next) {
     .catch(err => res.status(400).json('Error adding user :: '+err));
 };
 
-exports.login_user = passport.authenticate("local",{
-    successRedirect: "/",
-    failureRedirect: "/"
-});
+exports.login_user = (req, res, next) => {
+  console.log("login controller")
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    console.log("Info is "+(info? info.message: "nothing"))
+    if (!user) {
+      console.log("no user returning")
+      res.json({message: info.message})
+    } else {
+      req.login(user, {session: false}, (err) => {
+        if (err) {
+          res.send(err);
+        }
+
+        // generate a signed son web token with the contents of user object and return it in the response
+        const token = jwt.sign({user}, 'your_jwt_secret');
+        return res.json({user, token});
+      });
+    }
+  })(req, res, next);
+};
 
 exports.show_user_blogs = function(req, res, next) {
     Blog.find({user: req.params.id})

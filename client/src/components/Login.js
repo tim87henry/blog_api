@@ -8,27 +8,12 @@ const Login = () => {
     const password_ref = useRef();
 
     const userLogin = () => {
-        // axios.get("http://localhost:5000/users")
-        // .then(res => {
-        //     let found_user = res.data.find(user => user.username === username_ref.current.value);
-        //     if (found_user && found_user.password === password_ref.current.value) {
-        //         console.log("Logged in")
-        //     } else if (found_user) {
-        //         console.log("Wrong password bugger")
-        //     } else {
-        //         console.log("NAY")
-        //     }
-        // })
-        // .catch(function (error) {
-        //     console.log(error);
-        // });
-        
         axios.post("http://localhost:5000/users/login",{
             username: username_ref.current.value,
             password: password_ref.current.value
         })
         .then(function (response) {
-            console.log(response);
+            console.log(response.data);
         })
         .catch(function (error) {
             console.log(error);

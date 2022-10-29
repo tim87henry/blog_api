@@ -8,7 +8,7 @@ exports.find_all_blogs = function(req, res, next) {
 
 exports.add_blog = function(req, res, next) {
     const user = req.body.user;
-    const time = req.body.time;
+    const time = new Date();
     const title = req.body.title;
     const text = req.body.text;
     const comments = [];
