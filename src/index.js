@@ -5,6 +5,7 @@ const cors = require("cors");
 const passport = require('passport');
 const session = require("express-session");
 const bodyParser = require("body-parser");
+require('./passport');
 
 const app = express();
 
@@ -13,13 +14,12 @@ mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error',console.error.bind(console, "Mongo DB connection error"));
 
-
+app.use(cors());
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}));
 
 const userRoute = require('./routes/users');
