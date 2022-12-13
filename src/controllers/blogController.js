@@ -1,5 +1,7 @@
 var Blog = require('../models/blog');
 const util = require('util');
+const jwt = require('jsonwebtoken');
+var User = require('../models/user');
 
 exports.find_all_blogs = function(req, res, next) {
     Blog.find()
@@ -8,19 +10,35 @@ exports.find_all_blogs = function(req, res, next) {
 };
 
 exports.add_blog = function(req, res, next) {
-    console.log("User is   "+req.user)
-    // console.log("User is "+util.inspect(req, {showHidden: false, depth: null, colors: true}))
-    const user = req.user;
-    const time = new Date();
-    const title = req.body.title;
-    const text = req.body.text;
-    const comments = [];
+    // console.log("User is   "+req.user)
+    console.log("User is "+util.inspect(req.body))
+    jwt.verify(req.body.token, "cats", (err, data) => {
+        if (err) { 
+            console.log("JWT error") 
+        } else {
+            console.log("No error data is :: "+util.inspect(data))
+            User.findOne({ username: data.username }, (err, user) => {
+                if (err) { 
+                //   return res.json({error: err})
+                console.log("Error finding logged in user")
+                }
+                if (!user) {
+                //   return res.json( { message: "Something wrong here..", loggedIn: false });
+                console.log("Something wrong here..")
+                }
+                const time = new Date();
+                const title = req.body.title;
+                const text = req.body.text;
+                const comments = [];
 
-    const newBlog = new Blog({user, time, title, text, comments});
-    
-    newBlog.save()
-    .then(() => res.json('Blog added'))
-    .catch(err => res.status(400).json('Error adding blog :: '+err));
+                const newBlog = new Blog({user, time, title, text, comments});
+                
+                newBlog.save()
+                .then(() => res.json('Blog added'))
+                .catch(err => res.status(400).json('Error adding blog :: '+err));
+              });
+        }
+    })
 };
 
 exports.show_blog = function(req, res, next) {

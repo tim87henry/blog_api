@@ -5,25 +5,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const jwt = require('jsonwebtoken');
 require('../passport');
-
-// passport.use(
-//   new LocalStrategy((username, password, done) => {
-//     console.log("Auth")
-//     User.findOne({ username: username }, (err, user) => {
-//       if (err) { 
-//         res.json({error: err})
-//       }
-//       if (!user) {
-//         console.log("no user")
-//         return done(null, false, { message: "Incorrect username" });
-//       }
-//       if (user.password !== password) {
-//         return done(null, false, { message: "Incorrect password" });
-//       }
-//       return done(null, user);
-//     });
-//   })
-// );
+const util = require('util');
 
 passport.serializeUser(function(user, done) {
   console.log("Serialize")
@@ -59,29 +41,21 @@ exports.add_user = function(req, res, next) {
 exports.login_user = (req, res, next) => {
 
   console.log("happening")
-  passport.authenticate('jwt', {session: false}, (err, user, info) => {
-    console.log("Error is ::  "+err)
-    console.log("User is ::  "+user)
-          if (err || !user) {
-            console.log("Somethin ain't right")
-              return res.status(400).json({
-                  message: 'Something is not right',
-                  user : user
-              });
-          }
-          console.log("Working??")
-  
-          req.login(user, {session: false}, (err) => {
-             if (err) {
-                 res.send(err);
-             }
-  
-  // generate a signed son web token with the contents of user object and return it in the response
-  
-  const token = jwt.sign(user, 'your_jwt_secret');
-             return res.json({user, token});
-          });
-      })(req, res, next);
+  User.findOne({ username: req.body.username }, (err, user) => {
+    if (err) { 
+      return res.json({error: err})
+    }
+    if (!user) {
+      console.log("no user")
+      return res.json( { message: "Incorrect username", loggedIn: false });
+    }
+    if (user.password !== req.body.password) {
+      return res.json({ message: "Incorrect password", loggedIn: false});
+    }
+    const token = jwt.sign(JSON.stringify(user), "cats");
+    req.user = user;
+    return res.json({token, loggedIn: true})
+  });
 }
 
 exports.show_user_blogs = function(req, res, next) {

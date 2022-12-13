@@ -14,42 +14,18 @@ const Login = () => {
 
     const userLogin = async () => {
         console.log("Gonna try")
-        const data = {
+        const result = axios.post("http://localhost:5000/users/login",{
             username: username_ref.current.value,
             password: password_ref.current.value
+        })
+        const result1 = await result;
+        console.log(result1.data.loggedIn? "Correct user": "Bugger off bozo")
+        if (result1.data.loggedIn) {
+            localStorage.setItem('token', result1.data.token)
         }
-        // axios.post("http://localhost:5000/users/login",{
-        //     username: username_ref.current.value,
-        //     password: password_ref.current.value
-        // })
-        // .then(function (response) {
-        //     console.log(response.data);
-        // })
-        // .catch(function (error) {
-        //     console.log(error);
-        // });
-        // let p = await fetch('http://localhost:5000/users/login',{
-        //     mode: "cors",
-        //     credentials: "same-origin",
-        //     method: 'POST',
-        //     headers: myHeaders,
-        //     body: data
-        // })
-        // console.log(await p.json())
-        let p = await fetch('http://localhost:5000/users/login', {
-            method: "POST",
-            mode: "no-cors",
-            credentials:"same-origin",
-            headers: {
-                Authorization: "Bearer cats"
-            },
-            body:JSON.stringify(data),
-          });
-          const result = await p.json();
-          console.log(result)
+        console.log("From local storage :: "+localStorage.getItem('token'))
     }
     
-
     return(
         <div className="logInForm">
             Username <input type="text" name="username" ref={username_ref}></input><br/>

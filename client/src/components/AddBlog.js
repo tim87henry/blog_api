@@ -8,9 +8,11 @@ const AddBlog = () => {
     const text_ref = useRef();
 
     const addBlog = () => {
+        console.log("From local storage blog add :: "+localStorage.getItem('token'))
         axios.post("http://localhost:5000/blogs/add",{
             title: title_ref.current.value,
-            text: text_ref.current.value
+            text: text_ref.current.value,
+            token: localStorage.getItem('token')
         })
         .then(function (response) {
             console.log(response.data);
@@ -19,7 +21,6 @@ const AddBlog = () => {
             console.log(error);
         });
     }
-    
 
     return(
         <div className="logInForm">
