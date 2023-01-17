@@ -6,6 +6,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Login from './components/Login';
 import Logout from './components/Logout';
 import AddBlog from './components/AddBlog';
+import Home from './pages/Home';
 import { useEffect, useState } from 'react';
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
     }
     console.log("user logged in ")
     console.log(userToken)
-  })
+  },[])
 
   return (
     <div className="App">
@@ -30,6 +31,7 @@ function App() {
         <Title />
         <Navbar userLoggedIn={userLoggedIn}/>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/addblog" element={<AddBlog />} />
