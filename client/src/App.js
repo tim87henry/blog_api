@@ -8,6 +8,7 @@ import Logout from './components/Logout';
 import AddBlog from './components/AddBlog';
 import Home from './pages/Home';
 import { useEffect, useState } from 'react';
+import Blog from './pages/Blog';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/addblog" element={<AddBlog />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/show/:id" element={<Blog />} />
         </Routes>
       </BrowserRouter>
     </div>

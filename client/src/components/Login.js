@@ -1,12 +1,14 @@
 import axios from 'axios';
 import {useRef} from "react";
 import {Link} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
     const username_ref = useRef();
     const password_ref = useRef();
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
+    const navigate = useNavigate(); 
 
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -24,15 +26,14 @@ const Login = () => {
             localStorage.setItem('token', result1.data.token)
         }
         console.log("From local storage :: "+localStorage.getItem('token'))
+        navigate("/");
     }
     
     return(
         <div className="logInForm">
             Username <input type="text" name="username" ref={username_ref}></input><br/>
-            Password <input type="text" name="password" ref={password_ref}></input><br/>
-            <Link to="/login">
-                <input type="button" onClick={userLogin} value="Login" />
-            </Link>
+            Password <input type="password" name="password" ref={password_ref}></input><br/>
+            <input type="button" onClick={userLogin} value="Login" />
         </div>
     )
 };

@@ -20,12 +20,12 @@ const Home = () => {
         fetchPosts();
     }, [0]);
     
-
+    console.log(blogs.length)
     return(
         <div className="home">
             {blogs.map((blog) => (
                 <div style={{ borderBottom: "1px solid #c5c5c5", paddingBottom: "8px" }} key={blog._id}>
-                    <h3>{blog.title}</h3>
+                    <a href={"show/"+blog._id}><h3>{blog.title}</h3></a>
                     <p>{blog.text}</p>
                 </div>
                 ))}
