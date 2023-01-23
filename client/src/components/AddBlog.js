@@ -23,7 +23,7 @@ const AddBlog = () => {
     }
 
     return(
-        <div className="logInForm">
+        <div className="addBlogForm">
             Title <input type="text" name="title" ref={title_ref}></input><br/>
             Text <input type="text" name="text" ref={text_ref}></input><br/>
             <Link to="#">

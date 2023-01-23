@@ -17,12 +17,10 @@ function App() {
   useEffect(() => {
     const userToken = localStorage.getItem('token');
     if(userToken) {
-      console.log("True section")
       setUserLoggedIn(true);
     } else {
       setUserLoggedIn(false);
     }
-    console.log("user logged in ")
     console.log(userToken)
   },[])
 
@@ -30,14 +28,14 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Title />
-        <Navbar userLoggedIn={userLoggedIn}/>
+        <Navbar userLoggedIn={userLoggedIn} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login setUserLoggedIn={setUserLoggedIn} />} />
           <Route path="/addblog" element={<AddBlog />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/show/:id" element={<Blog />} />
+          <Route path="/show/:id" element={<Blog userLoggedIn={userLoggedIn} />} />
         </Routes>
       </BrowserRouter>
     </div>
