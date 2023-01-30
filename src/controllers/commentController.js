@@ -1,4 +1,5 @@
 var Comment = require('../models/comment');
+var Blog = require('../models/blog');
 var User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const util = require('util')
@@ -11,10 +12,14 @@ exports.all_comments = function(req, res, next) {
 
 exports.show_comments = function(req, res, next) {
     // Comment.find({blog: req.body.blog})
-    console.log("TEST   "+util.inspect(req.query))
-    Comment.find()
-    .then(comments => res.json(comments))
-    .catch(err => res.status(400).json('Error :: '+err));
+    console.log("TEST   "+req.params.id)
+    Blog.findById(req.params.id)
+    .then(blog => {
+        Comment.find({blog: blog})
+        .then(comments => res.json(comments))
+        .catch(err => res.status(400).json('Error fetching comments :: '+err));
+    })
+    .catch(err => res.status(400).json('Error fetching blog:: '+err));
 };
 
 exports.add_comment = async function(req, res, next) {

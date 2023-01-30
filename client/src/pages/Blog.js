@@ -6,41 +6,27 @@ const Blog = ({userLoggedIn}) => {
 
     let {id} = useParams();
     const text_ref = useRef();
-    const [blog, setBlog] = useState([]);
-    const [comments, setComments] = useState([]);
+    const [blog, setBlog] = useState({post:[], comments:[]});
+    const [hasLoaded, setHasLoaded] = useState(false);
+
+    const getData = async () => {
+        try {
+            setHasLoaded(false)
+            let [getBlogs, getComments] = await Promise.all([
+                axios.get("http://localhost:5000/blogs/"+id+"/show"),
+                axios.get("http://localhost:5000/comments/"+id+"/show")
+            ]);
+            // console.log("Blogs are :: "+JSON.stringify(getBlogs.data))
+            setBlog({post: getBlogs.data, comments: getComments.data})
+            setHasLoaded(true)
+            // console.log("Comments are :: "+JSON.stringify(getComments.data))
+        } catch(err) {
+            console.log("Error :: "+err)
+        }
+    }
 
     useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const url = "http://localhost:5000/blogs/"+id+"/show";
-                const res = await axios.get(url)
-                const doc = res.data;
-                setBlog(doc);
-            } catch (err) {
-                err.response.data.errors.map((err) => {
-                    return { text: err.msg, type: "danger" };
-                });
-            }
-            
-        }
-        fetchBlog();
-    }, [id]);
-
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const url = "http://localhost:5000/comments/show";
-                const res = await axios.get(url, { params: { blog: blog}})
-                const doc = res.data;
-                setComments(doc);
-            } catch (err) {
-                err.response.data.errors.map((err) => {
-                    return { text: err.msg, type: "danger" };
-                });
-            }
-            
-        }
-        fetchComments();
+        getData();
     }, []);
     
     const addComment = () => {
@@ -60,8 +46,9 @@ const Blog = ({userLoggedIn}) => {
 
     return (
         <div>
-            <h4>{blog.title}</h4>
-            <p>{blog.text}</p><br/>
+            {console.log("Hello "+JSON.stringify(blog.comments.length))}
+            <h4>{blog.post.title}</h4>
+            <p>{blog.post.text}</p><br/>
             {userLoggedIn && 
             <div className="addCommentForm">
                 <label>Add a Comment</label><br/><br/>
@@ -69,6 +56,11 @@ const Blog = ({userLoggedIn}) => {
                 <Link to="#">
                     <input type="button" onClick={addComment} value="Add comment" />
                 </Link>
+            </div>
+            }
+            {hasLoaded &&
+            <div>
+                {blog.comments[0].text}
             </div>
             }
         </div>
