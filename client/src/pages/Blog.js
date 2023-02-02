@@ -19,7 +19,7 @@ const Blog = ({userLoggedIn}) => {
             // console.log("Blogs are :: "+JSON.stringify(getBlogs.data))
             setBlog({post: getBlogs.data, comments: getComments.data})
             setHasLoaded(true)
-            // console.log("Comments are :: "+JSON.stringify(getComments.data))
+            console.log("Comments are :: "+JSON.stringify(getComments.data))
         } catch(err) {
             console.log("Error :: "+err)
         }
@@ -30,9 +30,9 @@ const Blog = ({userLoggedIn}) => {
     }, []);
     
     const addComment = () => {
-        console.log("From local storage blog add :: "+localStorage.getItem('token'))
+        // console.log("From local storage blog add :: "+localStorage.getItem('token'))
         axios.post("http://localhost:5000/comments/add",{
-            blog: blog,
+            blog: blog.post,
             text: text_ref.current.value,
             token: localStorage.getItem('token')
         })
@@ -46,21 +46,24 @@ const Blog = ({userLoggedIn}) => {
 
     return (
         <div>
-            {console.log("Hello "+JSON.stringify(blog.comments.length))}
             <h4>{blog.post.title}</h4>
             <p>{blog.post.text}</p><br/>
             {userLoggedIn && 
             <div className="addCommentForm">
                 <label>Add a Comment</label><br/><br/>
                 <textarea type="text" name="text" ref={text_ref}></textarea><br/><br/>
-                <Link to="#">
+                <Link to="/">
                     <input type="button" onClick={addComment} value="Add comment" />
                 </Link>
             </div>
             }
             {hasLoaded &&
             <div>
-                {blog.comments[0].text}
+                <br></br>
+                <h4><i>Comments</i></h4>
+                {blog.comments.map((c) => {
+                    return <div id={c._id}><h5>{c.username}</h5> <p>{c.comment.text}</p> </div>
+                })}
             </div>
             }
         </div>
