@@ -1,12 +1,14 @@
 import axios from 'axios';
-import React, {useRef} from "react";
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from "react";
+import { UNSAFE_DataStaticRouterContext, useNavigate } from 'react-router-dom';
 
 const Login = ({setUserLoggedIn}) => {
 
     const username_ref = useRef();
     const password_ref = useRef();
     const navigate = useNavigate(); 
+    const [loginErr, setLoginErr] = useState({ hasError: false, errMsg: ""});
+    const [passwd, setPasswd] = useState("");
 
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -21,15 +23,24 @@ const Login = ({setUserLoggedIn}) => {
         if (result1.data.loggedIn) {
             localStorage.setItem('token', result1.data.token)
             setUserLoggedIn(true)
+            navigate("/");
+        } else {
+            setLoginErr({ hasError: true, errMsg: result1.data.message })
+            setPasswd("")
         }
-        navigate("/");
+        
     }
     
     return(
         <div className="logInForm">
             Username <input type="text" name="username" ref={username_ref}></input><br/>
-            Password <input type="password" name="password" ref={password_ref}></input><br/>
+            Password <input type="password" name="password" ref={password_ref} value={passwd} onChange={(e)=> setPasswd(e.target.value)}></input><br/>
             <input type="button" onClick={userLogin} value="Login" />
+            {loginErr.hasError &&
+            <div>
+                <i>{loginErr.errMsg}</i>
+            </div>
+            }
         </div>
     )
 };

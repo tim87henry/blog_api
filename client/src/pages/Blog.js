@@ -48,6 +48,15 @@ const Blog = ({userLoggedIn}) => {
         <div>
             <h4>{blog.post.title}</h4>
             <p>{blog.post.text}</p><br/>
+            {hasLoaded &&
+            <div>
+                <br></br>
+                <h3><i>Comments</i></h3>
+                {blog.comments.map((c) => {
+                    return <div id={c._id}><h5>{c.username}</h5> <p>{c.comment.text}</p> </div>
+                })}
+            </div>
+            }
             {userLoggedIn && 
             <div className="addCommentForm">
                 <label>Add a Comment</label><br/><br/>
@@ -55,15 +64,6 @@ const Blog = ({userLoggedIn}) => {
                 <Link to="/">
                     <input type="button" onClick={addComment} value="Add comment" />
                 </Link>
-            </div>
-            }
-            {hasLoaded &&
-            <div>
-                <br></br>
-                <h4><i>Comments</i></h4>
-                {blog.comments.map((c) => {
-                    return <div id={c._id}><h5>{c.username}</h5> <p>{c.comment.text}</p> </div>
-                })}
             </div>
             }
         </div>
