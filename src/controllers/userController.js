@@ -47,14 +47,21 @@ exports.login_user = (req, res, next) => {
     }
     if (!user) {
       console.log("no user")
-      return res.json( { message: "Incorrect username", loggedIn: false });
+      return res.json({message: "Incorrect username"});
     }
     if (user.password !== req.body.password) {
-      return res.json({ message: "Incorrect password", loggedIn: false});
+      return res.json({message: "Incorrect password"});
     }
-    const token = jwt.sign(JSON.stringify(user), "cats");
+    // const token = jwt.sign({user}, "cats", {expiresIn: "10s"});
+    const access_token = jwt.sign({user}, "cats", { expiresIn: "30s"})
+    const refresh_token = jwt.sign({user}, "dogs", { expiresIn: "1d"})
+    User.findOne({_id: user.id}, (err, usr) => {
+      usr.refresh_token = refresh_token;
+      usr.save();
+    });
+    res.cookie('refresh_token', refresh_token, {httpOnly: true, maxAge: 24*60*60*100})
     req.user = user;
-    return res.json({token, loggedIn: true})
+    return res.json({refresh_token})
   });
 }
 

@@ -25,10 +25,12 @@ app.use(bodyParser.urlencoded({extended:true}));
 const userRoute = require('./routes/users');
 const blogRoute = require('./routes/blogs');
 const commentRoute = require('./routes/comments');
+const refreshRoute = require('./routes/refresh');
 
 app.use('/users', userRoute);
 app.use('/blogs', blogRoute);
 app.use('/comments', commentRoute);
+app.use('/refresh', refreshRoute);
 
 app.get('/', (req, res, next) => {
     res.send("Hmmm vandidhu")

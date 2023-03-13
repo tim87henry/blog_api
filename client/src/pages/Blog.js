@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import { Typography } from "@mui/material";
+import { borderTop } from "@mui/system";
 
 const Blog = ({userLoggedIn}) => {
 
@@ -46,8 +50,8 @@ const Blog = ({userLoggedIn}) => {
 
     return (
         <div>
-            <h4>{blog.post.title}</h4>
-            <p>{blog.post.text}</p><br/>
+            <Typography variant="h4">{blog.post.title}</Typography>
+            <Typography variant="subtitle2">{blog.post.text}</Typography><br/>
             {hasLoaded &&
             <div>
                 <br></br>
@@ -60,9 +64,11 @@ const Blog = ({userLoggedIn}) => {
             {userLoggedIn && 
             <div className="addCommentForm">
                 <label>Add a Comment</label><br/><br/>
-                <textarea type="text" name="text" ref={text_ref}></textarea><br/><br/>
+                {/* <textarea type="text" name="text" ref={text_ref}></textarea><br/><br/> */}
+                <TextField multiline rows={3}></TextField>
+                <br/><br/>
                 <Link to="/">
-                    <input type="button" onClick={addComment} value="Add comment" />
+                    <Button variant="contained" size="small" onClick={addComment}>Add comment</Button>
                 </Link>
             </div>
             }

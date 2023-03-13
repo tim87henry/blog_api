@@ -1,25 +1,76 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react';
+import jwt_decode from 'jwt-decode';
+import {useNavigate} from 'react-router-dom';
 
 const Home = () => {
 
     const [blogs, setBlogs] = useState([]);
+    const [token, setToken] = useState('');
+    const [name, setName] = useState('');
+    const [expire, setExpire] = useState('');
+    const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-            const res = await axios.get("http://localhost:5000/blogs");
-            const docs = res.data;    
-            setBlogs(docs);
-            } catch (err) {
-            const errorArray = err.response.data.errors.map((err) => {
-                return { text: err.msg, type: "danger" };
-            });
-            }
-        };
-        fetchPosts();
-    }, [0]);
+        // const fetchPosts = async () => {
+        //     try {
+        //     const res = await axios.get("http://localhost:5000/blogs");
+        //     const docs = res.data;    
+        //     setBlogs(docs);
+        //     } catch (err) {
+        //     const errorArray = err.response.data.errors.map((err) => {
+        //         return { text: err.msg, type: "danger" };
+        //     });
+        //     }
+        // };
+        // fetchPosts();
+        refreshToken();
+        getUsers();
+    }, []);
     
+    const refreshToken = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/refresh');
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setName(decoded.name);
+            setExpire(decoded.exp);
+        } catch (error) {
+            if (error.response) {
+                console.log("ERROR "+error.response.data)
+                console.log("TOKEN IS "+token)
+                navigate("/");
+            }
+        }
+    }
+
+    const axiosJWT = axios.create();
+
+    axiosJWT.interceptors.request.use(async (config) => {
+        const currentDate = new Date();
+        if (expire * 1000 < currentDate.getTime()) {
+            const response = await axios.get('http://localhost:5000/refresh');
+            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setName(decoded.name);
+            setExpire(decoded.exp);
+        }
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
+    });
+
+    const getUsers = async () => {
+        const response = await axiosJWT.get('http://localhost:5000/users', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        setUsers(response.data);
+    }
+
     console.log(blogs.length)
     return(
         <div className="home">
