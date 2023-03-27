@@ -6,6 +6,7 @@ const passport = require('passport');
 const session = require("express-session");
 const bodyParser = require("body-parser");
 require('./passport');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -14,7 +15,9 @@ mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error',console.error.bind(console, "Mongo DB connection error"));
 
-app.use(cors());
+app.use(cookieParser());
+// app.use(cors({ credentials: true, origin:'http://localhost:3000'}));
+app.use(cors({ origin: true , credentials : true}));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());

@@ -5,19 +5,17 @@ const util = require('util');
 exports.refresh_token =  async (req, res, next) => {
 
     try {
-        try {
-            console.log("Cookie is "+(typeof req.cookie.refresh_token === undefined))
-            const refresh_token = req.cookie.refresh_token;
-        } catch {
-            return res.sendStatus(401);
-        }
+        console.log("Obtained Cookies are "+util.inspect(req.cookies))
+        const refresh_token = req.cookies.refresh_token;
         if (!refresh_token) return res.sendStatus(401);
         const user = await User.find({refresh_token: refresh_token});
         if (!user) return res.sendStatus(403);
+        console.log("passed ck point 1")
         jwt.verify(refresh_token, "dogs", (err, decoded) => {
             if (err) return res.sendStatus(403);
-            const username = user.username;
-            const first_name = user.first_name;
+            console.log("passed ck point 22 "+util.inspect(user[0]))
+            const username = user[0].username;
+            const first_name = user[0].first_name;
             const access_token = jwt.sign({username, first_name}, "cats", { expiresIn: "30s"});
             return res.json({access_token, loggedIn: true});
         });

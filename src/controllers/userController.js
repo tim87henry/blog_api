@@ -41,7 +41,8 @@ exports.add_user = function(req, res, next) {
 exports.login_user = (req, res, next) => {
 
   console.log("happening")
-  User.findOne({ username: req.body.username }, (err, user) => {
+  console.log("input is "+util.inspect(req.body))
+  User.findOne({ username: req.body.data.username }, (err, user) => {
     if (err) { 
       return res.json({error: err})
     }
@@ -49,19 +50,21 @@ exports.login_user = (req, res, next) => {
       console.log("no user")
       return res.json({message: "Incorrect username"});
     }
-    if (user.password !== req.body.password) {
+    if (user.password !== req.body.data.password) {
+      console.log("Wrong passwrod")
       return res.json({message: "Incorrect password"});
     }
     // const token = jwt.sign({user}, "cats", {expiresIn: "10s"});
-    const access_token = jwt.sign({user}, "cats", { expiresIn: "30s"})
-    const refresh_token = jwt.sign({user}, "dogs", { expiresIn: "1d"})
+    const access_token = jwt.sign({username: user.username}, "cats", { expiresIn: "30s"})
+    const refresh_token = jwt.sign({username: user.username}, "dogs", { expiresIn: "1d"})
     User.findOne({_id: user.id}, (err, usr) => {
       usr.refresh_token = refresh_token;
       usr.save();
     });
-    res.cookie('refresh_token', refresh_token, {httpOnly: true, maxAge: 24*60*60*100})
-    req.user = user;
-    return res.json({refresh_token})
+    console.log("Refresh token is "+refresh_token)
+    res.cookie('refresh_token', refresh_token, {httpOnly: true, maxAge: 24*60*60*100, secure: false})
+    console.log("Acrrss :: "+access_token)
+    return res.json({access_token})
   });
 }
 

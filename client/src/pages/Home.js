@@ -26,15 +26,17 @@ const Home = () => {
         // };
         // fetchPosts();
         refreshToken();
-        getUsers();
+        // getUsers();
     }, []);
     
     const refreshToken = async () => {
         try {
             const response = await axios.get('http://localhost:5000/refresh');
-            setToken(response.data.accessToken);
-            const decoded = jwt_decode(response.data.accessToken);
-            setName(decoded.name);
+            console.log("obtained token  :: "+JSON.stringify(response.data.access_token));
+            setToken(response.data.access_token);
+            const decoded = jwt_decode(response.data.access_token);
+            console.log("decoded :: "+JSON.stringify(decoded));
+            setName(decoded.first_name);
             setExpire(decoded.exp);
         } catch (error) {
             if (error.response) {
@@ -45,35 +47,36 @@ const Home = () => {
         }
     }
 
-    const axiosJWT = axios.create();
+    // const axiosJWT = axios.create();
 
-    axiosJWT.interceptors.request.use(async (config) => {
-        const currentDate = new Date();
-        if (expire * 1000 < currentDate.getTime()) {
-            const response = await axios.get('http://localhost:5000/refresh');
-            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            setToken(response.data.accessToken);
-            const decoded = jwt_decode(response.data.accessToken);
-            setName(decoded.name);
-            setExpire(decoded.exp);
-        }
-        return config;
-    }, (error) => {
-        return Promise.reject(error);
-    });
+    // axiosJWT.interceptors.request.use(async (config) => {
+    //     const currentDate = new Date();
+    //     if (expire * 1000 < currentDate.getTime()) {
+    //         const response = await axios.get('http://localhost:5000/refresh');
+    //         config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+    //         setToken(response.data.accessToken);
+    //         const decoded = jwt_decode(response.data.accessToken);
+    //         setName(decoded.name);
+    //         setExpire(decoded.exp);
+    //     }
+    //     return config;
+    // }, (error) => {
+    //     return Promise.reject(error);
+    // });
 
-    const getUsers = async () => {
-        const response = await axiosJWT.get('http://localhost:5000/users', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        setUsers(response.data);
-    }
+    // const getUsers = async () => {
+    //     const response = await axiosJWT.get('http://localhost:5000/users', {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     });
+    //     setUsers(response.data);
+    // }
 
     console.log(blogs.length)
     return(
         <div className="home">
+            <h2>Hi {name}</h2>
             {blogs.map((blog) => (
                 <div style={{ borderBottom: "1px solid #c5c5c5", paddingBottom: "8px" }} key={blog._id}>
                     <a href={"show/"+blog._id}><h3>{blog.title}</h3></a>

@@ -15,19 +15,42 @@ const Login = ({setUserLoggedIn}) => {
     myHeaders.append('Authorization', 'Bearer cats');
 
     const userLogin = async () => {
-        const result = axios.post("http://localhost:5000/users/login",{
-            username: username_ref.current.value,
-            password: password_ref.current.value
-        })
-        const result1 = await result;
-        if (result1.data.loggedIn) {
-            localStorage.setItem('token', result1.data.token)
-            setUserLoggedIn(true)
-            navigate("/");
-        } else {
-            setLoginErr({ hasError: true, errMsg: result1.data.message })
-            setPasswd("")
-        }
+        axios.defaults.withCredentials = true;
+        // const result = axios.post("http://localhost:5000/users/login",{
+        //     username: username_ref.current.value,
+        //     password: password_ref.current.value
+        // })
+        axios.defaults.headers.post['Content-Type'] = 'application/json';
+        const data = {
+                        username: username_ref.current.value,
+                        password: password_ref.current.value
+                    }
+        // const result = axios("http://localhost:5000/users/login", {
+        //     method: 'POST',
+        //     data: {
+        //             username: username_ref.current.value,
+        //             password: password_ref.current.value
+        //         },
+        //     withCredentials: true
+        //   })
+        const result = await fetch('http://localhost:5000/users/login', {
+            method: 'POST',
+            body: JSON.stringify({ data }),
+            headers: {'Content-Type':'application/json'},
+            credentials: 'include',
+            mode: 'cors'
+          });
+        const result1 = await result.json();
+        console.log("Result is "+JSON.stringify(result1))
+        navigate("/");
+        // if (result1.data.loggedIn) {
+        //     localStorage.setItem('token', result1.data.token)
+        //     setUserLoggedIn(true)
+        //     navigate("/");
+        // } else {
+        //     setLoginErr({ hasError: true, errMsg: result1.data.message })
+        //     setPasswd("")
+        // }
         
     }
     
