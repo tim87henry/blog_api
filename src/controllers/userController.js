@@ -42,7 +42,7 @@ exports.login_user = (req, res, next) => {
 
   console.log("happening")
   console.log("input is "+util.inspect(req.body))
-  User.findOne({ username: req.body.data.username }, (err, user) => {
+  User.findOne({ username: req.body.username }, (err, user) => {
     if (err) { 
       return res.json({error: err})
     }
@@ -50,7 +50,7 @@ exports.login_user = (req, res, next) => {
       console.log("no user")
       return res.json({message: "Incorrect username"});
     }
-    if (user.password !== req.body.data.password) {
+    if (user.password !== req.body.password) {
       console.log("Wrong passwrod")
       return res.json({message: "Incorrect password"});
     }
@@ -62,7 +62,8 @@ exports.login_user = (req, res, next) => {
       usr.save();
     });
     console.log("Refresh token is "+refresh_token)
-    res.cookie('refresh_token', refresh_token, {httpOnly: true, maxAge: 24*60*60*100, secure: false})
+    // res.cookie('refresh_token', refresh_token, {httpOnly: true, maxAge: 24*60*60*100, secure: false})
+    res.cookie('refresh_token', refresh_token)
     console.log("Acrrss :: "+access_token)
     return res.json({access_token})
   });

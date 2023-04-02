@@ -1,12 +1,14 @@
 import axios from 'axios';
 import React, {useEffect, useRef, useState} from "react";
 import { UNSAFE_DataStaticRouterContext, useNavigate } from 'react-router-dom';
+import { useCookies } from "react-cookie";
 
 const Login = ({setUserLoggedIn}) => {
 
     const username_ref = useRef();
     const password_ref = useRef();
     const navigate = useNavigate(); 
+    const [cookies] = useCookies([]);
     const [loginErr, setLoginErr] = useState({ hasError: false, errMsg: ""});
     const [passwd, setPasswd] = useState("");
 
@@ -25,23 +27,25 @@ const Login = ({setUserLoggedIn}) => {
                         username: username_ref.current.value,
                         password: password_ref.current.value
                     }
-        // const result = axios("http://localhost:5000/users/login", {
-        //     method: 'POST',
-        //     data: {
-        //             username: username_ref.current.value,
-        //             password: password_ref.current.value
-        //         },
-        //     withCredentials: true
-        //   })
-        const result = await fetch('http://localhost:5000/users/login', {
+        const result = axios("http://localhost:5000/users/login", {
             method: 'POST',
-            body: JSON.stringify({ data }),
-            headers: {'Content-Type':'application/json'},
-            credentials: 'include',
-            mode: 'cors'
-          });
-        const result1 = await result.json();
-        console.log("Result is "+JSON.stringify(result1))
+            data: {
+                    username: username_ref.current.value,
+                    password: password_ref.current.value
+                },
+            withCredentials: true
+          })
+        console.log("Before fetch "+JSON.stringify(cookies))
+        // const result = await fetch('http://localhost:5000/users/login', {
+        //     method: 'POST',
+        //     body: JSON.stringify({ data }),
+        //     headers: {'Content-Type':'application/json'},
+        //     credentials: 'include',
+        //     mode: 'cors'
+        //   });
+        // const result1 = await result.json();
+        console.log("Result is "+JSON.stringify(result))
+        console.log("After fetch "+JSON.stringify(cookies))
         navigate("/");
         // if (result1.data.loggedIn) {
         //     localStorage.setItem('token', result1.data.token)

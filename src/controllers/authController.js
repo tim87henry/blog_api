@@ -11,6 +11,7 @@ exports.refresh_token =  async (req, res, next) => {
         const user = await User.find({refresh_token: refresh_token});
         if (!user) return res.sendStatus(403);
         console.log("passed ck point 1")
+        console.log("Obtained Cookies are "+util.inspect(req.cookies))
         jwt.verify(refresh_token, "dogs", (err, decoded) => {
             if (err) return res.sendStatus(403);
             console.log("passed ck point 22 "+util.inspect(user[0]))
