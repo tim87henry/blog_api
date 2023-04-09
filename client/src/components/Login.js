@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import { UNSAFE_DataStaticRouterContext, useNavigate } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 
-const Login = ({setUserLoggedIn}) => {
+const Login = (props) => {
 
     const username_ref = useRef();
     const password_ref = useRef();
@@ -11,6 +11,7 @@ const Login = ({setUserLoggedIn}) => {
     const [cookies] = useCookies([]);
     const [loginErr, setLoginErr] = useState({ hasError: false, errMsg: ""});
     const [passwd, setPasswd] = useState("");
+    const handleUserLoggedIn = props.handleUserLoggedIn;
 
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -18,15 +19,7 @@ const Login = ({setUserLoggedIn}) => {
 
     const userLogin = async () => {
         axios.defaults.withCredentials = true;
-        // const result = axios.post("http://localhost:5000/users/login",{
-        //     username: username_ref.current.value,
-        //     password: password_ref.current.value
-        // })
         axios.defaults.headers.post['Content-Type'] = 'application/json';
-        const data = {
-                        username: username_ref.current.value,
-                        password: password_ref.current.value
-                    }
         const result = axios("http://localhost:5000/users/login", {
             method: 'POST',
             data: {
@@ -35,26 +28,9 @@ const Login = ({setUserLoggedIn}) => {
                 },
             withCredentials: true
           })
-        console.log("Before fetch "+JSON.stringify(cookies))
-        // const result = await fetch('http://localhost:5000/users/login', {
-        //     method: 'POST',
-        //     body: JSON.stringify({ data }),
-        //     headers: {'Content-Type':'application/json'},
-        //     credentials: 'include',
-        //     mode: 'cors'
-        //   });
-        // const result1 = await result.json();
-        console.log("Result is "+JSON.stringify(result))
-        console.log("After fetch "+JSON.stringify(cookies))
+        // console.log("Result is "+JSON.stringify(result))
+        handleUserLoggedIn(true);
         navigate("/");
-        // if (result1.data.loggedIn) {
-        //     localStorage.setItem('token', result1.data.token)
-        //     setUserLoggedIn(true)
-        //     navigate("/");
-        // } else {
-        //     setLoginErr({ hasError: true, errMsg: result1.data.message })
-        //     setPasswd("")
-        // }
         
     }
     

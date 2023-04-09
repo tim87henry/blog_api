@@ -12,7 +12,7 @@ exports.find_all_blogs = function(req, res, next) {
 exports.add_blog = function(req, res, next) {
     // console.log("User is   "+req.user)
     console.log("User is "+util.inspect(req.body))
-    jwt.verify(req.body.token, "cats", (err, data) => {
+    jwt.verify(req.body.token, "dogs", (err, data) => {
         if (err) { 
             console.log("JWT error") 
         } else {

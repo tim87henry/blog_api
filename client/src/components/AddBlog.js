@@ -1,18 +1,20 @@
 import axios from 'axios';
 import {useRef} from "react";
 import {Link} from "react-router-dom";
+import { useCookies } from 'react-cookie';
 
 const AddBlog = () => {
 
     const title_ref = useRef();
     const text_ref = useRef();
+    const [cookies, setCookie, removeCookie] = useCookies(['refresh_token']);
 
     const addBlog = () => {
         console.log("From local storage blog add :: "+localStorage.getItem('token'))
         axios.post("http://localhost:5000/blogs/add",{
             title: title_ref.current.value,
             text: text_ref.current.value,
-            token: localStorage.getItem('token')
+            token: cookies['refresh_token']
         })
         .then(function (response) {
             console.log(response.data);
