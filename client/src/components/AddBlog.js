@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {useRef} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { useCookies } from 'react-cookie';
 
 const AddBlog = () => {
@@ -8,16 +8,18 @@ const AddBlog = () => {
     const title_ref = useRef();
     const text_ref = useRef();
     const [cookies, setCookie, removeCookie] = useCookies(['refresh_token']);
+    const navigate = useNavigate();
 
-    const addBlog = () => {
+    const addBlog = async () => {
         console.log("From local storage blog add :: "+localStorage.getItem('token'))
-        axios.post("http://localhost:5000/blogs/add",{
+        await axios.post("http://localhost:5000/blogs/add",{
             title: title_ref.current.value,
             text: text_ref.current.value,
             token: cookies['refresh_token']
         })
         .then(function (response) {
             console.log(response.data);
+            navigate('/');
         })
         .catch(function (error) {
             console.log(error);

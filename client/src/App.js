@@ -15,7 +15,6 @@ function App() {
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [blogs, setBlogs] = useState([]);
-  const [reRenderToggle, setReRenderToggle] = useState(false);
 
   useEffect(() => {
       getBlogs();
@@ -27,13 +26,8 @@ function App() {
   }
 
   const handleUserLoggedIn = (state) => {
-    // console.log("Handling state "+state)
+    console.log("Handling state "+state)
     setUserLoggedIn(state);
-  }
-
-  const handleReRenderToggle = (state) => {
-    console.log("rerendering... "+state+"   was "+reRenderToggle)
-    setReRenderToggle(state);
   }
   
   // console.log("BLOGS ARE SET  TO  "+userLoggedIn)
@@ -47,9 +41,7 @@ function App() {
           element={<Home 
           userLoggedIn={userLoggedIn} 
           blogs={blogs} 
-          handleUserLoggedIn={handleUserLoggedIn} 
-          reRenderToggle={reRenderToggle}
-          handleReRenderToggle={handleReRenderToggle}
+          handleUserLoggedIn={handleUserLoggedIn}
           />} 
           />
           <Route path="/signup" element={<Signup />} />

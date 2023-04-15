@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
+import { useLocation } from 'react-router-dom';
 
 const Home = (props) => {
 
@@ -14,22 +15,12 @@ const Home = (props) => {
     const [cookies] = useCookies([]);
     const userLoggedIn = props.userLoggedIn;
     const handleUserLoggedIn = props.handleUserLoggedIn;
-    const reRenderToggle = props.reRenderToggle;
-    const handleReRenderToggle = props.handleReRenderToggle;
+    const location = useLocation();
 
     useEffect(() => {
-        // console.log("PASSED DOWN  :: ")
-        checkReRenderToggle();
+        console.log("PASSED DOWN  :: "+userLoggedIn+"   "+JSON.stringify(cookies))
         refreshToken();
-        // getUsers();
     }, []);
-    
-    const checkReRenderToggle = () => {
-        if(userLoggedIn && cookies['refresh_token']==undefined) {
-            const state = reRenderToggle? false: true;
-            handleReRenderToggle(state);
-        }
-    }
 
     const refreshToken = async () => {
         console.log("Is it actually passed down????   "+JSON.stringify(cookies))
@@ -47,7 +38,6 @@ const Home = (props) => {
             setExpire(decoded.exp);
             const currentDate = new Date();
             if (expire * 1000 > currentDate.getTime()) {
-                // setUserLoggedIn(false);
                 handleUserLoggedIn(false);
             }
         } catch (error) {

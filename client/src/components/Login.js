@@ -17,10 +17,11 @@ const Login = (props) => {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', 'Bearer cats');
 
-    const userLogin = async () => {
+    const userLogin = async (e) => {
+        e.preventDefault();
         axios.defaults.withCredentials = true;
         axios.defaults.headers.post['Content-Type'] = 'application/json';
-        const result = axios("http://localhost:5000/users/login", {
+        const result = await axios("http://localhost:5000/users/login", {
             method: 'POST',
             data: {
                     username: username_ref.current.value,
