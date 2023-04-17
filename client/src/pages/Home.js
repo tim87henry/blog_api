@@ -8,7 +8,8 @@ import { useLocation } from 'react-router-dom';
 const Home = (props) => {
 
     const [token, setToken] = useState('');
-    const [name, setName] = useState('');
+    // const [name, setName] = useState('');
+    const name = props.name;
     const [expire, setExpire] = useState('');
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
@@ -19,56 +20,62 @@ const Home = (props) => {
 
     useEffect(() => {
         console.log("PASSED DOWN  :: "+userLoggedIn+"   "+JSON.stringify(cookies))
-        refreshToken();
+        // refreshToken();
     }, []);
 
-    const refreshToken = async () => {
-        console.log("Is it actually passed down????   "+JSON.stringify(cookies))
-        try {
-            axios.defaults.withCredentials = true;
-            const response = await axios.get('http://localhost:5000/refresh');
-            console.log("obtained token  :: "+JSON.stringify(response.data.access_token));
-            setToken(response.data.access_token);
-            const decoded = jwt_decode(response.data.access_token);
-            console.log("decoded :: "+JSON.stringify(decoded));
-            setName(decoded.first_name);
-            // setUserLoggedIn(true);
-            handleUserLoggedIn(true);
-            console.log("Expire is set to "+decoded.exp)
-            setExpire(decoded.exp);
-            const currentDate = new Date();
-            if (expire * 1000 > currentDate.getTime()) {
-                handleUserLoggedIn(false);
-            }
-        } catch (error) {
-            if (error.response) {
-                console.log("ERROR "+error.response.data)
-                console.log("TOKEN IS "+token)
-                navigate("/");
-            }
-        }
+    const handleUserStateChange = (state) => {
+        handleUserLoggedIn(state);
     }
 
-    const axiosJWT = axios.create();
+    // const refreshToken = async () => {
+    //     console.log("Is it actually passed down????   "+JSON.stringify(cookies))
+    //     try {
+    //         axios.defaults.withCredentials = true;
+    //         const response = await axios.get('http://localhost:5000/refresh');
+    //         console.log("obtained token  :: "+JSON.stringify(response.data.access_token));
+    //         setToken(response.data.access_token);
+    //         const decoded = jwt_decode(response.data.access_token);
+    //         console.log("decoded :: "+JSON.stringify(decoded));
+    //         setName(decoded.first_name);
+    //         // setUserLoggedIn(true);
+    //         // handleUserLoggedIn(true);
+    //         handleUserStateChange(true);
+    //         console.log("Expire is set to "+decoded.exp)
+    //         setExpire(decoded.exp);
+    //         const currentDate = new Date();
+    //         if (expire * 1000 > currentDate.getTime()) {
+    //             console.log("TOKEN EXPIRED!!!! RELOGIN AGAIN")
+    //             handleUserLoggedIn(false);
+    //         }
+    //     } catch (error) {
+    //         if (error.response) {
+    //             console.log("ERROR "+error.response.data)
+    //             console.log("TOKEN IS "+token)
+    //             navigate("/");
+    //         }
+    //     }
+    // }
 
-    axiosJWT.interceptors.request.use(async (config) => {
-        const currentDate = new Date();
-        console.log("Exp :: "+expire * 1000 )
-        console.log("Data :: "+currentDate.getTime())
-        if (expire * 1000 < currentDate.getTime()) {
-            const response = await axios.get('http://localhost:5000/refresh');
-            config.headers.Authorization = `Bearer ${response.data.access_token}`;
-            console.log("Interceptor 1 :: "+JSON.stringify(response.data.access_token))
-            setToken(response.data.access_token);
-            const decoded = jwt_decode(response.data.access_token);
-            setName(decoded.name);
-            setExpire(decoded.exp);
-            console.log("Interceptor 2 :: "+JSON.stringify(decoded))
-        }
-        return config;
-    }, (error) => {
-        return Promise.reject(error);
-    });
+    // const axiosJWT = axios.create();
+    
+    // axiosJWT.interceptors.request.use(async (config) => {
+    //     const currentDate = new Date();
+    //     console.log("Exp :: "+expire * 1000 )
+    //     console.log("Data :: "+currentDate.getTime())
+    //     if (expire * 1000 < currentDate.getTime()) {
+    //         const response = await axios.get('http://localhost:5000/refresh');
+    //         config.headers.Authorization = `Bearer ${response.data.access_token}`;
+    //         console.log("Interceptor 1 :: "+JSON.stringify(response.data.access_token))
+    //         setToken(response.data.access_token);
+    //         const decoded = jwt_decode(response.data.access_token);
+    //         setName(decoded.name);
+    //         setExpire(decoded.exp);
+    //         console.log("Interceptor 2 :: "+JSON.stringify(decoded))
+    //     }
+    //     return config;
+    // }, (error) => {
+    //     return Promise.reject(error);
+    // });
 
     console.log("HOME "+JSON.stringify(props.blogs))
     return(
